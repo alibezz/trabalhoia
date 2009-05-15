@@ -1,5 +1,4 @@
 require 'redeneural'
-require 'pp'
 
 net = Ai4r::NeuralNetwork::Backpropagation.new([3, 5, 4])
 
@@ -23,9 +22,9 @@ classes.each {|cl|
 }
 
 100.times {
-results.each { |example, result|
- net.train(example, result)
-}
+  results.each { |example, result|
+    net.train(example, result)
+  }
 }
 
 
