@@ -117,8 +117,8 @@ module Ai4r
       def initialize(network_structure)
         @structure = network_structure
         @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
-        @propagation_function = lambda { |x| Math.tanh(x) } #lambda { |x| 1/(1+Math.exp(-1*(x))) } #
-        @derivative_propagation_function = lambda { |y| 1.0 - y**2 } #lambda { |y| y*(1-y) } #
+        @propagation_function = lambda { |x| 1/(1+Math.exp(-1*(x))) } # lambda { |x| Math.tanh(x) } #
+        @derivative_propagation_function = lambda { |y| y*(1-y) } # lambda { |y| 1.0 - y**2 } #
         @disable_bias = false
         @learning_rate = 0.25
         @momentum = 0.1
