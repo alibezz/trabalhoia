@@ -1,17 +1,16 @@
 require 'redeneural'
 
-net = Ai4r::NeuralNetwork::Backpropagation.new([3, 5, 4])
+net = Ai4r::NeuralNetwork::Backpropagation.new([4, 6, 3])
 
-result_ball = [1, 0, 0, 0]
-result_cube = [0, 1, 0, 0]
-result_racket = [0, 0, 1, 0]
-result_redbull = [0, 0, 0, 1]
+result_ball = [1, 0, 0]
+result_racket = [0, 1, 0]
+result_redbull = [0, 0, 1]
 base_dir = "../images/segmented/"
 ref_base_dir = "../images/reference/"
 
 results = []
 
-classes = ["ball", "cube", "racket", "redbull"]
+classes = ["ball", "racket", "redbull"]
 
 classes.each {|cl|
   File.open(base_dir + cl + "/results") {|f|
@@ -21,7 +20,7 @@ classes.each {|cl|
   }
 }
 
-100.times {
+10000.times {
   results.each { |example, result|
     net.train(example, result)
   }
