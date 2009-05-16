@@ -21,5 +21,5 @@ imagen = bwareaopen(imagen,30);
 % Labelize
 imagen = bwlabel(imagen);
 
-x = regionprops(imagen, {'Solidity' 'Eccentricity' 'Extent'});
+x = regionprops(imagen, {'Perimeter' 'Solidity' 'Eccentricity' 'Extent'});
 return
