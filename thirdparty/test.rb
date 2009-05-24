@@ -2,7 +2,7 @@ require 'redeneural'
 require 'pp'
 require 'getoptlong'
 
-def train(net)
+def train(net, iterations=1000)
   result_ball = [1, 0, 0]
   result_racket = [0, 1, 0]
   result_redbull = [0, 0, 1]
@@ -20,7 +20,7 @@ def train(net)
     }
   }
 
-  1000.times {
+  iterations.times {
     results.each { |example, result|
       net.train(example, result)
     }
@@ -61,11 +61,13 @@ end
 
 def main
   opts = GetoptLong.new([ '--input-file', '-i', GetoptLong::REQUIRED_ARGUMENT],
-                        [ '--output-file', '-o', GetoptLong::REQUIRED_ARGUMENT]
+                        [ '--output-file', '-o', GetoptLong::REQUIRED_ARGUMENT],
+                        [ '--iterations', '-n', GetoptLong::REQUIRED_ARGUMENT]
                         )
 
   opt_file = nil
   ipt_file = nil
+  iterations = 1000
 
   opts.each do |opt, arg|
     case opt
@@ -73,13 +75,18 @@ def main
       ipt_file = arg
     when '--output-file'
       opt_file = arg
+    when '--iterations'
+      n = arg.to_i
+      if n > 0
+        iterations = n
+      end
     end
   end
 
   net = Ai4r::NeuralNetwork::Backpropagation.new([4, 6, 3])
 
   if !ipt_file
-    train(net)
+    train(net, iterations)
   else
     net.weights, net.activation_nodes = read_from_file(ipt_file)
   end
