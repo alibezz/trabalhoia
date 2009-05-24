@@ -33,7 +33,10 @@ def test(net)
   File.open(ref_base_dir + "/results") {|f|
     puts "--------"
     while !f.eof?
-      puts net.eval(f.readline.split.map{|it| it.to_f})
+      result = net.eval(f.readline.split.map{|it| it.to_f})
+      puts format("Bola: %.2f
+Raquete: %.2f
+Red Bull: %.2f", *result)
       puts "--------"
     end
   }
