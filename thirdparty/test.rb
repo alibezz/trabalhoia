@@ -52,7 +52,7 @@ end
 
 # Lê um arquivo contendo pesos e nós de ativação.
 # Retorna um array com os pesos e nós de ativação:
-# => [pesos, nos_de_ativacao]
+# [pesos, nos_de_ativacao]
 def read_from_file(file)
   weights = nil
   activation_nodes = nil
