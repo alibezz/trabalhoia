@@ -2,7 +2,11 @@ require 'redeneural'
 require 'pp'
 require 'getoptlong'
 
+# Treina a rede.
+# Além da rede a ser trainada, é passado o número de iterações
+# como parâmetro. O valor padrão é 1000.
 def train(net, iterations=1000)
+  # resultados esperados para cada objeto
   result_ball = [1, 0, 0]
   result_racket = [0, 1, 0]
   result_redbull = [0, 0, 1]
@@ -10,8 +14,10 @@ def train(net, iterations=1000)
 
   results = []
 
+  # objetos que temos
   classes = ["ball", "racket", "redbull"]
 
+  # lemos as entradas para realizar o treinamento
   classes.each {|cl|
     File.open(base_dir + cl + "/results") {|f|
       while !f.eof?
@@ -20,6 +26,7 @@ def train(net, iterations=1000)
     }
   }
 
+  # aqui a rede é treinada objetivamente
   iterations.times {
     results.each { |example, result|
       net.train(example, result)
@@ -27,6 +34,9 @@ def train(net, iterations=1000)
   }
 end
 
+# Testa a rede.
+# Além da rede a ser testada, é passado o arquivo contendo
+# as entradas a ser testado.
 def test(net, file)
   File.open(file) {|f|
     puts "--------"
@@ -40,6 +50,9 @@ Red Bull: %.2f", *result)
   }
 end
 
+# Lê um arquivo contendo pesos e nós de ativação.
+# Retorna um array com os pesos e nós de ativação:
+# => [pesos, nos_de_ativacao]
 def read_from_file(file)
   weights = nil
   activation_nodes = nil
@@ -52,6 +65,7 @@ def read_from_file(file)
   [weights, activation_nodes]
 end
 
+# Escreve os pesos e nós de ativação em um arquivo.
 def write_to_file(file, weights, activation_nodes)
   File.open(file, 'w') { |f|
     f << weights.map {|m| m.map {|n| n.map {|p| p.to_s }.join(' ')}.join("\n")}.join("\n---\n")
@@ -61,6 +75,7 @@ def write_to_file(file, weights, activation_nodes)
 end
 
 def main
+  # definição das opções de linhas de comando
   opts = GetoptLong.new([ '--input-file', '-i', GetoptLong::REQUIRED_ARGUMENT],
                         [ '--output-file', '-o', GetoptLong::REQUIRED_ARGUMENT],
                         [ '--test-file', '-f', GetoptLong::REQUIRED_ARGUMENT],
@@ -88,6 +103,7 @@ def main
     end
   end
 
+  # cria a rede neural e define o número de neurônios de cada camada
   net = Ai4r::NeuralNetwork::Backpropagation.new([4, 6, 3])
 
   if !ipt_file
@@ -103,5 +119,5 @@ def main
   end
 end
 
-
+# executa a rotina principal
 main
