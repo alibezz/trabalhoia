@@ -27,10 +27,8 @@ def train(net, iterations=1000)
   }
 end
 
-def test(net)
-  ref_base_dir = "../images/reference/"
-
-  File.open(ref_base_dir + "/results") {|f|
+def test(net, file)
+  File.open(file) {|f|
     puts "--------"
     while !f.eof?
       result = net.eval(f.readline.split.map{|it| it.to_f})
@@ -65,12 +63,14 @@ end
 def main
   opts = GetoptLong.new([ '--input-file', '-i', GetoptLong::REQUIRED_ARGUMENT],
                         [ '--output-file', '-o', GetoptLong::REQUIRED_ARGUMENT],
+                        [ '--test-file', '-f', GetoptLong::REQUIRED_ARGUMENT],
                         [ '--iterations', '-n', GetoptLong::REQUIRED_ARGUMENT]
                         )
 
   opt_file = nil
   ipt_file = nil
   iterations = 1000
+  test_file = "../images/reference/results"
 
   opts.each do |opt, arg|
     case opt
@@ -78,6 +78,8 @@ def main
       ipt_file = arg
     when '--output-file'
       opt_file = arg
+    when '--test-file'
+      test_file = arg
     when '--iterations'
       n = arg.to_i
       if n > 0
@@ -94,7 +96,7 @@ def main
     net.weights, net.activation_nodes = read_from_file(ipt_file)
   end
 
-  test(net)
+  test(net, test_file)
 
   if opt_file
     write_to_file(opt_file, net.weights, net.activation_nodes)
