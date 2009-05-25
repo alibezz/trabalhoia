@@ -11,14 +11,7 @@ require 'parameterizable'
  
 module Ai4r
   
-  # Artificial Neural Networks are mathematical or computational models based on
-  # biological neural networks.
-  #
-  # More about neural networks:
-  #
-  # * http://en.wikipedia.org/wiki/Artificial_neural_network
-  #
-  module NeuralNetwork
+   module NeuralNetwork
     
     # = Introduction
     #
@@ -58,62 +51,54 @@ module Ai4r
     # * :momentum => By default 0.1. Set this parameter to 0 to disable
     # momentum
     #
-    # = How to use it
+
+
+    # = COMO USAR
     #
-    # # Create the network with 4 inputs, 1 hidden layer with 3 neurons,
-    # # and 2 outputs
+    # # Para criar uma rede neural com 4 entradas, 1 camada escondida com 
+    # # 3 neurônios e 2 saídas:
     # net = Ai4r::NeuralNetwork::Backpropagation.new([4, 3, 2])
     #
-    # # Train the network
+    # # Treinando a rede neural:
     # 1000.times do |i|
     # net.train(example[i], result[i])
     # end
     #
-    # # Use it: Evaluate data with the trained network
+    # # Avaliando dados com a rede treinada:
     # net.eval([12, 48, 12, 25])
     # => [0.86, 0.01]
     #
-    # More about multilayer perceptron neural networks and backpropagation:
-    #
-    # * http://en.wikipedia.org/wiki/Backpropagation
-    # * http://en.wikipedia.org/wiki/Multilayer_perceptron
-    #
-    # = About the project
-    # Author:: Sergio Fierens
-    # License:: MPL 1.1
-    # Url:: http://ai4r.rubyforge.org
+   
     class Backpropagation
       
       include Ai4r::Data::Parameterizable
       
-      parameters_info :disable_bias => "If true, the alforithm will not use "+
-            "bias nodes. False by default.",
-        :initial_weight_function => "f(n, i, j) must return the initial "+
-            "weight for the conection between the node i in layer n, and "+
-            "node j in layer n+1. By default a random number in [-1, 1) range.",
-        :propagation_function => "By default: " +
-            "lambda { |x| 1/(1+Math.exp(-1*(x))) }",
-        :derivative_propagation_function => "Derivative of the propagation "+
-            "function, based on propagation function output. By default: " +
-            "lambda { |y| y*(1-y) }, where y=propagation_function(x)",
-        :learning_rate => "By default 0.25",
-        :momentum => "By default 0.1. Set this parameter to 0 to disable "+
-            "momentum."
+      parameters_info :disable_bias => "Se verdadeiro, o algoritmo nao usarah "+             "neuronios de bias. Falso por padrao.",
+        :initial_weight_function => "f(n, i, j) deve retornar o "+
+            "peso inicial para conexao entre neuronio i na camada n e "+
+            "neuronio j na camada n + 1. Por padrao, eh um numero aleatorio em [-1, 1).",
+        :propagation_function => "Por padrao " +
+            "lambda { |x| 1/(1+Math.exp(-1*(x))) }.",
+        :derivative_propagation_function => "Derivada da funcao de propagacao "+
+            ". Por padrao: " +
+            "lambda { |y| y*(1-y) }, onde y=propagation_function(x)",
+        :learning_rate => "Por padrao 0.25",
+        :momentum => "Por padrao 0.1."
           
       attr_accessor :structure, :weights, :activation_nodes
       
-      # Creates a new network specifying the its architecture.
-      # E.g.
+      # Cria nova rede neural especificando sua arquitetura.
+      # Exemplo:
       #
-      # net = Backpropagation.new([4, 3, 2]) # 4 inputs
-      # # 1 hidden layer with 3 neurons,
-      # # 2 outputs
-      # net = Backpropagation.new([2, 3, 3, 4]) # 2 inputs
-      # # 2 hidden layer with 3 neurons each,
-      # # 4 outputs
-      # net = Backpropagation.new([2, 1]) # 2 inputs
-      # # No hidden layer
-      # # 1 output
+      # net = Backpropagation.new([4, 3, 2]) # 4 entradas
+      # # 1 camada escondida com 3 neuronios,
+      # # 2 saidas
+      # net = Backpropagation.new([2, 3, 3, 4]) # 2 entradas
+      # # 2 camadas escondidas com 3 neuronios cada
+      # # 4 saidas
+      # net = Backpropagation.new([2, 1]) # 2 entradas
+      # # Nenhuma camada escondida
+      # # 1 saida
       def initialize(network_structure)
         @structure = network_structure
         @initial_weight_function = lambda { |n, i, j| ((rand 2000)/1000.0) - 1}
@@ -124,8 +109,8 @@ module Ai4r
         @momentum = 0.1
       end
  
-      # Evaluates the input.
-      # E.g.
+      # Avalia a entrada.
+      # Exemplo:
       # net = Backpropagation.new([4, 3, 2])
       # net.eval([25, 32.3, 12.8, 1.5])
       # # => [0.83, 0.03]
@@ -136,13 +121,13 @@ module Ai4r
         return @activation_nodes.last.clone
       end
       
-      # This method trains the network using the backpropagation algorithm.
+      # Este metodo treina a rede usando backpropagation.
       #
-      # input: Networks input
+      # Entrada: entradas da rede neural.
       #
-      # output: Expected output for the given input.
+      # Saida: saida esperada para a entrada fornecida.
       #
-      # This method returns the network error:
+      # Este metodo retorna o erro da rede:
       # => 0.5 * sum( (expected_value[i] - output_value[i])**2 )
       def train(inputs, outputs)
         eval(inputs)
@@ -150,8 +135,8 @@ module Ai4r
         calculate_error(outputs)
       end
       
-      # Initialize (or reset) activation nodes and weights, with the
-      # provided net structure and parameters.
+      # Inicializa (ou reseta) a ativação dos nós e pesos,
+      # dada a estrutura da rede e seus parametros.
       def init_network
         init_activation_nodes
         init_weights
@@ -161,7 +146,7 @@ module Ai4r
       
       protected
  
-      # Propagate error backwards
+      # Propaga o erro para as camadas anteriores
       def backpropagate(expected_output_values)
         check_output_dimension(expected_output_values.length)
         calculate_output_deltas(expected_output_values)
@@ -169,7 +154,7 @@ module Ai4r
         update_weights
       end
       
-      # Propagate values forward
+      # Propaga os valores para as camadas posteriores
       def feedforward(input_values)
         input_values.each_index do |input_index|
           @activation_nodes.first[input_index] = input_values[input_index]
@@ -185,7 +170,7 @@ module Ai4r
         end
       end
       
-      # Initialize neurons structure.
+      # Inicializa a estrutura dos neuronios.
       def init_activation_nodes
         @activation_nodes = Array.new(@structure.length) do |n|
           Array.new(@structure[n], 1.0)
@@ -195,8 +180,8 @@ module Ai4r
         end
       end
       
-      # Initialize the weight arrays using function specified with the
-      # initial_weight_function parameter
+      # Inicializa os vetores dos pesos usando a função especificada
+      # através do parametro initial_weight_function
       def init_weights
         @weights = Array.new(@structure.length-1) do |i|
           nodes_origin = @activation_nodes[i].length
@@ -209,9 +194,8 @@ module Ai4r
         end
       end
  
-      # Momentum usage need to know how much a weight changed in the
-      # previous training. This method initialize the @last_changes
-      # structure with 0 values.
+      # Para usar o momentum, é preciso saber quanto um peso mudou
+      # no treinamento anterior. Este metodo inicializa @last_changes com zeros.
       def init_last_changes
         @last_changes = Array.new(@weights.length) do |w|
           Array.new(@weights[w].length) do |i|
@@ -220,7 +204,7 @@ module Ai4r
         end
       end
       
-      # Calculate deltas for output layer
+      # Calcula deltas para a camada de saída.
       def calculate_output_deltas(expected_values)
         output_values = @activation_nodes.last
         output_deltas = []
@@ -232,7 +216,7 @@ module Ai4r
         @deltas = [output_deltas]
       end
       
-      # Calculate deltas for hidden layers
+      # Calcula deltas para camadas escondidas.
       def calculate_internal_deltas
         prev_deltas = @deltas.last
         (@activation_nodes.length-2).downto(1) do |layer_index|
@@ -250,7 +234,7 @@ module Ai4r
         end
       end
       
-      # Update weights after @deltas have been calculated.
+      # Atualiza os pesos dado que @deltas foram calculados.
       def update_weights
         (@weights.length-1).downto(0) do |n|
           @weights[n].each_index do |i|
@@ -264,7 +248,7 @@ module Ai4r
         end
       end
       
-      # Calculate quadratic error for a expected output value
+      # Calcula o erro para um valor de saída esperado:
       # Error = 0.5 * sum( (expected_value[i] - output_value[i])**2 )
       def calculate_error(expected_output)
         output_values = @activation_nodes.last

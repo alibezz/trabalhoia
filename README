@@ -1,0 +1,56 @@
+Primeiro Trabalho Prático da Disciplina MATA64 - Uma rede neural para reconhecimento de imagens
+
+Alunos: Aline Bessa, Caio Tiago, Danton Pimentel, Flávio Medina, Rafael Saraiva e Tiago Miranda.
+
+Neste trabalho, implementamos uma rede neural para o reconhecimento de bolas de tênis, raquetes de ping-pong e latas de Redbull.
+
+1 - Linguagem e ambiente:
+
+	Este trabalho foi desenvolvido em ruby. Para fazer download da linguagem, ir ao site ruby-lang.org/pt/.
+
+	Caso esteja utilizando o Windows, instale ruby em C:\ruby e, para executar, faça "C:\ruby\bin\ruby.exe" test.rb. No Linux, após instalar ruby, execute ruby test.rb. Certifique-se de, antes de executar, estar no diretório thirdparty.
+
+2 - Passando arquivos de entrada, pesos e saída para o programa:
+
+2.1 - Entrada:
+	O arquivo de entrada deve conter os dados da imagem que a rede neural deve reconhecer. Se nada é especificado, o arquivo utilizado é o images/reference/results. Se quiser testar a rede com outras imagem, é só digitar ruby test.rb -f <arquivo-de-entrada> no Linux ou, no Windows, "C:\ruby\bin\ruby.exe" test.rb -f <arquivo-de-entrada>. 
+	O formato do arquivo de entrada é uma ou mais tabelas, cada uma com 4 colunas e 3 linhas. As colunas, na ordem, são as características: Eccentrity Solidity Extent Perimeter/100. As linhas, na ordem, são as imagens da Bola, da Raquete e do Redbull. É importante certificar de que o perímetro foi dividido por 100. Estas características foram extraídas no Matlab, através dos scripts carac.m e results.m que constam na pasta scripts. As tabelas que correspondem às imagens que a rede deve reconhecer não devem ser separadas por linhas ou qualquer tipo de caractere.
+
+2.2 - Pesos:
+	O arquivo de pesos contém pesos previamente calculados para o funcionamento da rede neural. Se nada é especificado, a rede é treinada (por padrão, com 1000 iterações) e, em seguida, utilizada para o reconhecimento de uma ou mais imagens de Bola, Raquete e Redbull. Talvez não seja desejável treinar a rede sempre que se quer reconhecer uma nova imagem, então pode-se passar um arquivo de pesos da seguinte forma: ruby test.rb -i <arquivo-de-pesos> no Linux e, no Windows, "C:\ruby\bin\ruby.exe" -i <arquivo-de-pesos>. Assim como disponibilizamos uma imagem de referência para reconhecimento em images/reference/results, há um arquivo com pesos que calculamos, thirdparty/pesos. O formato do arquivo de pesos é:
+
+<pesos camada 1>
+---
+<pesos camada 2>
+___
+<nós de ativação>
+
+	Certamente, estes pesos não foram escolhidos aleatoriamente, mas provêm de um treinamento com as imagens que constam em images/segmented (exceção feita à pasta cube). Caso deseje treinar a rede e criar um novo arquivo de pesos para analisar imagens, é só digitar ruby test.rb -o <arquivo-de-pesos> no Linux ou, no Windows, "C:\ruby\bin\ruby.exe" -o <arquivo-de-pesos>. A opção -o especifica o nome de um arquivo para gravação dos pesos calculados no treinamento.
+
+2.3 - Saída:
+	A saída deste trabalho é, por padrão, na saída-padrão. Decidimos, em vez de apresentar a saída através de combinações de 0's e 1's, apresentarmos números reais entre 0 e 1. Com isto, é possível avaliar com mais precisão e realismo o quanto a rede realmente está convencida de que uma dada imagem pertence a uma das três classes possíveis (bola, raquete ou redbull). No exemplo padrão, temos:
+
+--------
+Bola: 0.94
+Raquete: 0.02
+Red Bull: 0.03
+--------
+Bola: 0.00
+Raquete: 1.00
+Red Bull: 0.00
+--------
+Bola: 0.00
+Raquete: 0.00
+Red Bull: 1.00
+--------
+
+	Cada conjunto de informações separado por linhas pontilhadas indica o resultado da rede para uma imagem, na ordem das linhas da tabela do arquivo de entrada. Neste caso temos os resultados do reconhecimento de uma bola, uma raquete e uma lata de redbull nesta ordem, pois esta é a ordem das linhas do arquivo images/reference/results. Temos que a rede tem aproximadamente 94% de certeza de que a bola apresentada é uma bola, 100% de certeza de que a raquete apresentada é uma raquete e 100% de certeza de que o redbull apresentado é um redbull. 
+
+3 - Alterando número de camadas, neurônios por camada, número de iterações para treinamento e função de propagação:
+	
+	Para alterar o número de camadas, coloque mais campos no vetor da linha 107 de thirdparty/test.rb. Atualmente, estamos utilizando uma rede neural com três camadas: 4 entradas, uma camada escondida com 6 neurônios e uma camada de saída com 3 saídas. 
+	Para alterar o número de iterações do treinamento, modifique a linha 9 de thirdparty/test.rb. Atualmente, utilizamos 1000 iterações.
+	Para alterar a função de propagação e sua derivada, modifique as linhas 105 e 106 de thirdparty/redeneural.rb. Atualmente, utilizamos a sigmóide. A tangente hiperbólica está comentada no código.
+
+	Ruby é interpretada, então, para efetivar mudanças nestes parâmetros, só é necessário salvar os arquivos alterados. O único arquivo neste trabalho que não foi desenvolvido pela equipe é o redeneural.rb, documentado e devidamente licenciado para nosso uso.
+
